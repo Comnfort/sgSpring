@@ -1,12 +1,12 @@
 package ru.game.sg.spaceGame;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import ru.game.sg.dialog.Fail;
 import ru.game.sg.dialog.TheEnd;
 import ru.game.sg.dialog.Welcome;
 
+import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -19,66 +19,77 @@ public class Main extends JFrame implements ActionListener {
     private GameField gf;
     private Welcome welcome;
     private Fail fail;
-
     private TheEnd theEnd;
-    private Image imgDialog;
+    private ProxyInst proxyInst;
 
-    public Image getImgDialog() {
-        return imgDialog;
+
+
+    @Autowired
+    public void setWelcome(Welcome welcome) {
+        this.welcome = welcome;
     }
 
-    public void setImgDialog(Image imgDialog) {
-        this.imgDialog = imgDialog;
-    }
-
+    @Autowired
     public void setTheEnd(TheEnd theEnd) {
         this.theEnd = theEnd;
     }
 
+    @Autowired
     public void setFail(Fail fail) {
         this.fail = fail;
     }
 
     @Autowired
-    private Main() {
-
-        if(Toolkit.getDefaultToolkit().getScreenSize().getWidth()<1536){
-            JOptionPane.showMessageDialog(this,"Разрешение экрана должно быть больше  ");System.exit(1);}
-        else  if(Toolkit.getDefaultToolkit().getScreenSize().getWidth()==1536){setSize( (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth(), (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight());}
-        else  if(Toolkit.getDefaultToolkit().getScreenSize().getWidth()>1536){setSize(1536,864);}
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setUndecorated(true);
-        setResizable(true);
-        setLayout(null);
-        imgDialog=new ImageIcon(ClassLoader.getSystemResource("img/p1.jpg")).getImage();
-        add(welcome=new Welcome(this));
+    public void setProxyInst(ProxyInst proxyInst) {
+        this.proxyInst = proxyInst;
     }
 
-    public static void main(String[] args) {
+
+    public ProxyInst getProxyInst() {
+        return proxyInst;
+    }
+
+    public Main() {
         SwingUtilities.invokeLater(() -> {
-            try { new Main();
-            } catch (Exception e) {e.printStackTrace();}});
+            if (Toolkit.getDefaultToolkit().getScreenSize().getWidth() < 1536) {
+                JOptionPane.showMessageDialog(this, "Разрешение экрана должно быть больше  ");
+                System.exit(1);
+            } else if (Toolkit.getDefaultToolkit().getScreenSize().getWidth() == 1536) {
+                setSize((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth(),
+                        (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight());
+            } else if (Toolkit.getDefaultToolkit().getScreenSize().getWidth() > 1536) {
+                setSize(1536, 864);
+            }
+            setLocationRelativeTo(null);
+            setDefaultCloseOperation(EXIT_ON_CLOSE);
+            setUndecorated(true);
+            setResizable(true);
+            setLayout(null);
+        });
     }
 
-    public void eventHandler(){
-        setVisible(false);
-        add(fail);
-        remove(gf);
+    @PostConstruct
+    private void init() {
+        add(welcome);
         setVisible(true);
     }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
         String event = e.getActionCommand();
         if (event == "Играть") {
             setVisible(false);
-            add(gf = new GameField(this));
+            gf=proxyInst.getGameField();
+            add(gf);
+            gf.init();
             remove(welcome);
             setVisible(true);
         } else if (event == "Переиграть") {
             setVisible(false);
-            add(gf = new GameField(this));
+            gf=proxyInst.getGameField();
+            add(gf);
+            gf.init();
             remove(fail);
             setVisible(true);
         } else if (event == "победа") {
@@ -88,13 +99,12 @@ public class Main extends JFrame implements ActionListener {
             setVisible(true);
         } else if (event == "Выход") {
             System.exit(0);
-        }else if (event=="Главное окно"){
+        } else if (event == "Главное окно") {
             setVisible(false);
-            imgDialog=new ImageIcon(ClassLoader.getSystemResource("img/p1.jpg")).getImage();
-            add(welcome=new Welcome(this));
+            add(welcome);
             remove(theEnd);
             setVisible(true);
-        }else {
+        } else {
             setVisible(false);
             add(fail);
             remove(gf);

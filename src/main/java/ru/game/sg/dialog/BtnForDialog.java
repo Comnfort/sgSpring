@@ -8,17 +8,16 @@ import java.awt.*;
 
 @Component
 @Lazy
-public class BtnForDialog extends JButton
-{
-    private int width=180;
-    private int hight=35;
+public class BtnForDialog extends JButton {
+    private int width = 180;
+    private int hight = 35;
 
 
     public BtnForDialog() {
-        Font font=new Font(null,1,18);
+        Font font = new Font(null, 1, 18);
         setFont(font);
         setFocusPainted(false);
-        setSize(width,hight);
+        setSize(width, hight);
         setContentAreaFilled(false);
     }
 }

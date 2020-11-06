@@ -1,11 +1,7 @@
 package ru.game.sg.spaceGame;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import ru.game.sg.dialog.Fail;
-import ru.game.sg.dialog.TheEnd;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,52 +10,52 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
 
-
 @Component
-@Scope("prototype")
-@Lazy
-class Fire extends JComponent implements ActionListener {
-    private  int x;                             //центр героя
-    private  int y;                             //центр героя
+@Scope(value = "prototype")
+ class Fire extends JComponent implements ActionListener {
+    private int x;                             //центр героя
+    private int y;                             //центр героя
     private double degree;                      //полученный угол
     private double radians;                     //полученный угол в радианах
     private Timer tm;                           //таймер
     private Point[] oneBullet;
-    private int countToCreate=0;                //количество точек
+    private int countToCreate = 0;                //количество точек
     private ImageIcon imgBullet;
     private Image image;
     private int quantity;
     private Coin con;
-    private Fire f=this;
+    private Fire f = this;
     private GameField gf;
     private String who;
-    private SwingWorker<Void,Void> sw;
+    private EnemyLvl1 enemy;
+    private SwingWorker<Void, Void> sw;
 
 
-    @Autowired
-    public Fire(GameField gf) {           //выстрел корабля
+
+
+
+
+    public void fireSh(GameField gf) {
         this.gf = gf;
         who = "ship";
         commonInit();
-        con=gf.getCon();
+        con = gf.getCoin();
         this.x = (int) gf.getShip().getSh().getCenterX();
         this.y = (int) gf.getShip().getSh().getCenterY();
-        this.degree=gf.getShip().getDegree();
-        radians=Math.toRadians(degree);
+        this.degree = gf.getShip().getDegree();
+        radians = Math.toRadians(degree);
 
-        sw=new SwingWorker<>() {        //  < возвращаемый результат, промежуточные данные(используются методом process() -добавляются и хранятся листом)>
+        sw = new SwingWorker<Void, Void>() {
             @Override
-            protected Void doInBackground()
-            {
-                image=createBulletImg();
+            protected Void doInBackground() {
+                image = createBulletImg();
                 solution();
                 return null;
             }
 
             @Override
-            protected void done()
-            {
-                tm=new Timer(10, f);
+            protected void done() {
+                tm = new Timer(10, f);
                 tm.start();
                 super.done();
             }
@@ -78,30 +74,27 @@ class Fire extends JComponent implements ActionListener {
 //        });
     }
 
-
-    @Autowired(required = false)
-    public Fire(GameField gf , EnemyLvl1 enShip) {
-        who="enemy";
-        this.gf=gf;
+    public void fireEn(GameField gf, EnemyLvl1 enShip) {
+        this.gf = gf;
+        who = "enemy";
         commonInit();
         this.x = (int) enShip.getShEn().getCenterX();
         this.y = (int) enShip.getShEn().getCenterY();
-        this.degree=enShip.getCurrentDegree();
-        radians=Math.toRadians(degree);
+        this.degree = enShip.getCurrentDegree();
+        radians = Math.toRadians(degree);
 
-        SwingWorker<Void,Void> sw=new SwingWorker<Void, Void>() {        //  < возвращаемый результат, промежуточные данные(используются методом process() -добавляются и хранятся листом)>
+        SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {  //< возвращаемый результат, промежуточные данные(используются методом process() -добавляются и хранятся листом)>
             @Override
             protected Void doInBackground() {
                 solution();
-                image=createBulletImg();
                 return null;
             }
 
             @Override
             protected void done() {
-
                 super.done();
-                tm=new Timer(25, f);
+                image = createBulletImg();
+                tm = new Timer(25, f);
                 tm.start();
             }
         };
@@ -109,27 +102,32 @@ class Fire extends JComponent implements ActionListener {
     }
 
 
-    private void commonInit(){
-        quantity=100;
-        oneBullet=new Point[quantity];
-        imgBullet=new ImageIcon(ClassLoader.getSystemResource("img/bullet.png"));
+    private void commonInit() {
+        quantity = 100;
+        oneBullet = new Point[quantity];
+        imgBullet = new ImageIcon(ClassLoader.getSystemResource("img/bullet.png"));
         setOpaque(false);
         setSize(gf.getFieldW(), gf.getFieldH());
     }
 
 
-    private Image createBulletImg(){
+    private Image createBulletImg() {
         BufferedImage imgBuf = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D gr=imgBuf.createGraphics();
-        if (who=="ship"){
-            gr.rotate(Math.toRadians(degree-90),8,8);
-        }else {
+        Graphics2D gr = imgBuf.createGraphics();
+        if (who == "ship") {
+            gr.rotate(Math.toRadians(degree - 90), 8, 8);
+        } else {
 //            gr.rotate(radians-Math.PI/2,8,8);
-            gr.rotate(Math.toRadians(degree-90),8,8);
+            gr.rotate(Math.toRadians(degree - 90), 8, 8);
         }
-        gr.drawImage(imgBullet.getImage(),0,0,16,16,null);
+        gr.drawImage(imgBullet.getImage(), 0, 0, 16, 16, null);
         gr.dispose();
         return imgBuf;
+    }
+
+    private void addNewEnemy(){
+        gf.getEnemyList().add(enemy=gf.getFr().getProxyInst().getEnemy());
+        enemy.init(gf);
     }
 
 
@@ -139,68 +137,61 @@ class Fire extends JComponent implements ActionListener {
         checkHit();
         repaint();
         countToCreate++;
-        if (countToCreate==quantity){ tm.stop();}
+        if (countToCreate == quantity) {
+            tm.stop();
+        }
     }
 
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (countToCreate<quantity-1&&image!=null){
+        if (countToCreate < quantity - 1 && image != null) {
             g.setColor(Color.magenta);
-            g.drawImage(image, oneBullet[countToCreate].x-8,oneBullet[countToCreate].y-8,null);
+            g.drawImage(image, oneBullet[countToCreate].x - 8, oneBullet[countToCreate].y - 8, null);
         } else {
             g.dispose();
         }
     }
 
 
-    private void checkHit(){
-        if (who=="ship") {
+    private void checkHit() {
+        if (who == "ship") {
             if (con.getaL().size() != 0 && countToCreate < quantity) {
-                for (int i = 0; i < con.getaL().size(); i++)
-                {
+                for (int i = 0; i < con.getaL().size(); i++) {
                     if (con.getaL().get(i).contains(oneBullet[countToCreate])) {
                         con.setCountCoin(con.getCountCoin() + 1);
-                        if (con.getCountCoin()==8){
-                            gf.setStartPointEnemy(new Point(gf.getFieldWidth()-250,650));
-                            gf.getEnemyList().add(new EnemyLvl1(gf));
-                        }else if(con.getCountCoin()==17){
-                            gf.setStartPointEnemy(new Point(gf.getFieldWidth()+150,650));
-                            gf.getEnemyList().add(new EnemyLvl1(gf));
-                        }else if (con.getCountCoin()==26){
-                            gf.setStartPointEnemy(new Point(gf.getFieldWidth()*3-250,150));
-                            gf.getEnemyList().add(new EnemyLvl1(gf));
-                            gf.setStartPointEnemy(new Point(gf.getFieldWidth()*2+150,350));
-                            gf.getEnemyList().add(new EnemyLvl1(gf));
+                        if (con.getCountCoin() == 8) {
+                            gf.setStartPointEnemy(new Point(gf.getFieldWidth() - 250, 650));
+                            addNewEnemy();
+                        } else if (con.getCountCoin() == 17) {
+                            gf.setStartPointEnemy(new Point(gf.getFieldWidth() + 150, 650));
+                            addNewEnemy();
+                        } else if (con.getCountCoin() == 26) {
+                            gf.setStartPointEnemy(new Point(gf.getFieldWidth() * 3 - 250, 150));
+                            addNewEnemy();
+                            gf.setStartPointEnemy(new Point(gf.getFieldWidth() * 2 + 150, 350));
+                            addNewEnemy();
                         }
-                        gf.setPathToSound("sound/монета.wav");
-                        new Sound(gf);
+                        gf.getFr().getProxyInst().getSound().runSound("sound/монета.wav");
                         con.getaL().remove(i);
                         countToCreate = quantity;
                         return;
                     }
                 }
             }
-            if (gf.getEnemyList()!=null&&gf.getEnemyList().size()!=0&&countToCreate < quantity)
-            {
-                for (int j = 0; j < gf.getEnemyList().size(); j++)
-                {
-                    if (gf.getEnemyList().get(j).getShEn().contains(oneBullet[countToCreate]))
-                    {
-                        gf.getEnemyList().get(j).setHealthCount(gf.getEnemyList().get(j).getHealthCount()-1);
-                        if (gf.getEnemyList().get(j).getHealthCount()==0)
-                        {
+            if (gf.getEnemyList() != null && gf.getEnemyList().size() != 0 && countToCreate < quantity) {
+                for (int j = 0; j < gf.getEnemyList().size(); j++) {
+                    if (gf.getEnemyList().get(j).getShEn().contains(oneBullet[countToCreate])) {
+                        gf.getEnemyList().get(j).setHealthCount(gf.getEnemyList().get(j).getHealthCount() - 1);
+                        if (gf.getEnemyList().get(j).getHealthCount() == 0) {
                             gf.getEnemyList().remove(j);
-                            gf.getShip().setCountDeaths(gf.getShip().getCountDeaths()+1);
-                            gf.getCon().setNewBorder();
+                            gf.getShip().setCountDeaths(gf.getShip().getCountDeaths() + 1);
+                            gf.getCoin().setNewBorder();
                         }
 
-                        if (gf.getShip().getCountDeaths()==4)
-                        {
-                            gf.getFr().setImgDialog(new ImageIcon(ClassLoader.getSystemResource("img/victory.jpg")).getImage());
-                            gf.getFr().setTheEnd(new TheEnd(gf.getFr()));
-                            gf.getFr().actionPerformed(new ActionEvent(gf.getFr(),0,"победа"));
+                        if (gf.getShip().getCountDeaths() == 4) {
+                            gf.getFr().actionPerformed(new ActionEvent(gf.getFr(), 0, "победа"));
                         }
 
                         countToCreate = quantity;
@@ -208,46 +199,63 @@ class Fire extends JComponent implements ActionListener {
                     }
                 }
             }
-        }else if(countToCreate < quantity)
-        {
-           if (gf.getShip().getSh().contains(oneBullet[countToCreate]))
-           {
-              gf.getShip().setHealthCount(gf.getShip().getHealthCount()-1);
-              if (gf.getShip().getHealthCount()==0){
-                  gf.getFr().setImgDialog(new ImageIcon(ClassLoader.getSystemResource("img/fail.jpg")).getImage());
-                  gf.getFr().setFail(new Fail(gf.getFr()));
-                  gf.getFr().actionPerformed(new ActionEvent(gf.getFr(),0,"fail"));
-              }
-               countToCreate = quantity;
-               return;
-           }
+        } else if (countToCreate < quantity) {
+            if (gf.getShip().getSh().contains(oneBullet[countToCreate])) {
+                gf.getShip().setHealthCount(gf.getShip().getHealthCount() - 1);
+                if (gf.getShip().getHealthCount() == 0) {
+                    gf.getEnemyList().clear();
+                    gf.getShip().resetControl();
+                    gf.getFr().actionPerformed(new ActionEvent(gf.getFr(), 0, "fail"));
+                }
+                countToCreate = quantity;
+                return;
+            }
         }
     }
 
 
-    private void solution()   {                   //вычисление точек
+    private void solution() {                   //вычисление точек
 
-        if (degree>360){degree=360;}
-        if (degree<0){degree=0;}
+        if (degree > 360) {
+            degree = 360;
+        }
+        if (degree < 0) {
+            degree = 0;
+        }
 
-        switch ((int) degree){
-            case 0:     sol2(0, -1);  break;
-            case 180:   sol2(0,1); break;
-            case 90:    sol2(1,0);  break;
-            case 270:   sol2(-1,0); break;
-            default:    sol2(Math.sin(radians),-(Math.cos(radians)));  break;
+        switch ((int) degree) {
+            case 0:
+                sol2(0, -1);
+                break;
+            case 180:
+                sol2(0, 1);
+                break;
+            case 90:
+                sol2(1, 0);
+                break;
+            case 270:
+                sol2(-1, 0);
+                break;
+            default:
+                sol2(Math.sin(radians), -(Math.cos(radians)));
+                break;
         }
     }
 
-    private void sol2(double stepX, double stepY){                   //создание массива траектории пули
-        double step=10;                                              //длина гипотенузы при вычислении шага x1 и y1
-        oneBullet[0]=new Point(x,y);
-        boolean check=true;
-        do {countToCreate++;
-            if (countToCreate<100){
-                oneBullet[countToCreate]=new Point(x+(int)(countToCreate*stepX*step),y+(int)(countToCreate*stepY*step));
-            }else {check=false; countToCreate=0;}
-        }while (check);
+
+    private void sol2(double stepX, double stepY) {                   //создание массива траектории пули
+        double step = 10;                                              //длина гипотенузы при вычислении шага x1 и y1
+        oneBullet[0] = new Point(x, y);
+        boolean check = true;
+        do {
+            countToCreate++;
+            if (countToCreate < 100) {
+                oneBullet[countToCreate] = new Point(x + (int) (countToCreate * stepX * step), y + (int) (countToCreate * stepY * step));
+            } else {
+                check = false;
+                countToCreate = 0;
+            }
+        } while (check);
 
     }
 }

@@ -7,14 +7,24 @@ import org.springframework.context.ConfigurableApplicationContext;
 @SpringBootApplication
 public class SgApplication {
 
-	public static void main(String[] args) {
-//		SpringApplication.run(SgApplication.class, args);
-//		ClassPathXmlApplicationContext context=new ClassPathXmlApplicationContext("beans.xml");
+    public static void main(String[] args) {
+        //контекст на основе аннотаций(каталог для сканирования или класс конфигурации)
+//        AnnotationConfigApplicationContext applicationContext =new AnnotationConfigApplicationContext(SpringContextOnJava.class);
+
+//		SpringApplication.run(SpringContextOnJava.class, args);
+
+
+        //контекст на основе xml
+//		ClassPathXmlApplicationContext context=new ClassPathXmlApplicationContext("configSG.xml");
 //		HW hw=(HW) context.getBean("product");
 //		hw.setStr("new Hello");
 //		System.out.println(hw.getStr());
-		SpringApplicationBuilder builder = new SpringApplicationBuilder(SgApplication.class);
-		builder.headless(false);
-		ConfigurableApplicationContext context = builder.run(args);
-	}
+
+
+        //контекст для оконного приложения
+        SpringApplicationBuilder builder = new SpringApplicationBuilder(SpringContextOnJava.class);
+        builder.headless(false);
+        ConfigurableApplicationContext context2 = builder.run(args);
+
+    }
 }
