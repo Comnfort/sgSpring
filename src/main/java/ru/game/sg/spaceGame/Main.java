@@ -1,11 +1,13 @@
 package ru.game.sg.spaceGame;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import ru.game.sg.dialog.DialogSG;
 import ru.game.sg.dialog.Fail;
 import ru.game.sg.dialog.TheEnd;
 import ru.game.sg.dialog.Welcome;
-
 import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
@@ -17,15 +19,14 @@ import java.awt.event.ActionListener;
 public class Main extends JFrame implements ActionListener {
 
     private GameField gf;
-    private Welcome welcome;
-    private Fail fail;
-    private TheEnd theEnd;
+    private DialogSG welcome;
+    private DialogSG fail;
+    private DialogSG theEnd;
     private ProxyInst proxyInst;
 
 
-
     @Autowired
-    public void setWelcome(Welcome welcome) {
+    public void setWelcome(@Qualifier("welcome") Welcome welcome) {
         this.welcome = welcome;
     }
 

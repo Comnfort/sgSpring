@@ -273,22 +273,22 @@ public class GameField extends JPanel implements ActionListener {
                     }
                 }
                 if (t == KeyEvent.VK_RIGHT) {
-                    RIGHT.setPressed(true);
+                    RIGHT.setPressed(Boolean.TRUE);
                 }
                 if (t == KeyEvent.VK_LEFT) {
-                    LEFT.setPressed(true);
+                    LEFT.setPressed(Boolean.TRUE);
                 }
                 if (t == KeyEvent.VK_UP) {
-                    UP.setPressed(true);
+                    UP.setPressed(Boolean.TRUE);
                 }
                 if (t == KeyEvent.VK_DOWN) {
-                    DOWN.setPressed(true);
+                    DOWN.setPressed(Boolean.TRUE);
                 }
                 if (t == KeyEvent.VK_R) {
-                    RIGHT_ROTATE.setPressed(true);
+                    RIGHT_ROTATE.setPressed(Boolean.TRUE);
                 }
                 if (t == KeyEvent.VK_E) {
-                    LEFT_ROTATE.setPressed(true);
+                    LEFT_ROTATE.setPressed(Boolean.TRUE);
                 }
                 if (t == KeyEvent.VK_SHIFT) {
                     ship.setStepHero(35);
@@ -313,22 +313,22 @@ public class GameField extends JPanel implements ActionListener {
                 super.keyReleased(e);
                 int t = e.getKeyCode();
                 if (t == KeyEvent.VK_UP) {
-                    UP.setPressed(false);
+                    UP.setPressed(Boolean.FALSE);
                 }
                 if (t == KeyEvent.VK_DOWN) {
-                    DOWN.setPressed(false);
+                    DOWN.setPressed(Boolean.FALSE);
                 }
                 if (t == KeyEvent.VK_LEFT) {
-                    LEFT.setPressed(false);
+                    LEFT.setPressed(Boolean.FALSE);
                 }
                 if (t == KeyEvent.VK_RIGHT) {
-                    RIGHT.setPressed(false);
+                    RIGHT.setPressed(Boolean.FALSE);
                 }
                 if (t == KeyEvent.VK_R) {
-                    RIGHT_ROTATE.setPressed(false);
+                    RIGHT_ROTATE.setPressed(Boolean.FALSE);
                 }
                 if (t == KeyEvent.VK_E) {
-                    LEFT_ROTATE.setPressed(false);
+                    LEFT_ROTATE.setPressed(Boolean.FALSE);
                 }
                 if (t == KeyEvent.VK_SHIFT) {
                     ship.setStepHero(5);

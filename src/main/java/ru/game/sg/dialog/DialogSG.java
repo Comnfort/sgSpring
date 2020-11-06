@@ -7,16 +7,16 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 
-public abstract class AbstractDialog extends JPanel {
+public abstract class DialogSG extends JPanel {
 
-    private Image img;
-    protected Main frame;
-    protected BtnForDialog btn1;
-    protected BtnForDialog btn2;
-    protected BtnForDialog btn3;
+     private Image img;
+     Main frame;
+     BtnForDialog btn1;
+     BtnForDialog btn2;
+     BtnForDialog btn3;
 
 
-    public AbstractDialog(Main fr, Image img) {
+    public DialogSG(Main fr, Image img) {
         this.frame = fr;
         this.img = img;
         setBounds(0, 0, frame.getWidth(), frame.getHeight());
@@ -25,8 +25,9 @@ public abstract class AbstractDialog extends JPanel {
         btn1 = new BtnForDialog();
         btn2 = new BtnForDialog();
         btn3 = new BtnForDialog();
-
     }
+
+
 
     @Override
     protected void paintComponent(Graphics g) {

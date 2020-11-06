@@ -15,6 +15,7 @@ public class MyAspect {
     @Before("@annotation(ru.game.sg.testaop.Loggable)")
     public void methodPoint() {
         countFire++;
+
         System.out.println(countFire+" выстрел;");
     }
 

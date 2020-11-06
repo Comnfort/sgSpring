@@ -9,7 +9,7 @@ import java.awt.*;
 
 @Component
 @Lazy
-public class Fail extends AbstractDialog {
+public class Fail extends DialogSG {
     private static Image imgDialog = new ImageIcon(ClassLoader.getSystemResource("img/fail.jpg")).getImage();
 
     private String failMessage = "Поражение";

@@ -9,7 +9,7 @@ import java.awt.*;
 
 @Component
 @Lazy
-public class TheEnd extends AbstractDialog {
+public class TheEnd extends DialogSG {
     private static Image imgDialog = new ImageIcon(ClassLoader.getSystemResource("img/victory.jpg")).getImage();
 
     private String winMessage = "Победа!";

@@ -8,9 +8,9 @@ import javax.swing.*;
 import java.awt.*;
 
 
-@Component("welcom")
+@Component("welcome")
 @Lazy
-public class Welcome extends AbstractDialog {
+public class Welcome extends DialogSG {
     private static Image imgDialog = new ImageIcon(ClassLoader.getSystemResource("img/p1.jpg")).getImage();
 
 
