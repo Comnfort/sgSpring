@@ -1,6 +1,5 @@
 package ru.game.sg.spaceGame;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.sound.sampled.*;
@@ -10,17 +9,10 @@ import java.util.Objects;
 
 @Component
 class Sound {
-    private Main fr;
-
-    @Autowired
-    public Sound(Main fr) {
-    }
 
 
-
-    public void runSound(String pathSound) {
-        String path = pathSound;
-        try (AudioInputStream ais = AudioSystem.getAudioInputStream(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream(path)))) {                  //try with source
+     void runSound(String pathSound) {
+         try (AudioInputStream ais = AudioSystem.getAudioInputStream(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream(pathSound)))) {
             Clip c = AudioSystem.getClip();
             c.open(ais);
             c.loop(0);

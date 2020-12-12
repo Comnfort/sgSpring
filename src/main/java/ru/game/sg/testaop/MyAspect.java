@@ -12,11 +12,16 @@ public class MyAspect {
     private int countFire=0;
 
 
-    @Before("@annotation(ru.game.sg.testaop.Loggable)")
+    @Before("@annotation(Loggable)")
     public void methodPoint() {
         countFire++;
-
+        System.out.println(chekMemory());
         System.out.println(countFire+" выстрел;");
+    }
+
+    private static String chekMemory() {
+        Runtime runtime = Runtime.getRuntime();
+        return (runtime.totalMemory() - runtime.freeMemory())/1048576+" Мбайт";
     }
 
 

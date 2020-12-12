@@ -1,23 +1,24 @@
 package ru.game.sg.dialog;
 
-import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;
 
 @Component
-@Lazy
-public class BtnForDialog extends JButton {
-    private int width = 180;
-    private int hight = 35;
+@Scope("prototype")
+ class BtnForDialog extends JButton {
 
-
-    public BtnForDialog() {
-        Font font = new Font(null, 1, 18);
+    @Autowired
+     BtnForDialog() {
+        Font font = new Font(null, Font.BOLD, 18);
         setFont(font);
         setFocusPainted(false);
-        setSize(width, hight);
+        int width = 180;
+        int height = 35;
+        setSize(width, height);
         setContentAreaFilled(false);
     }
 }

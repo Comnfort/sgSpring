@@ -15,81 +15,75 @@ import static ru.game.sg.spaceGame.Control.*;
 @Component
 @Scope("prototype")
 class Ship {
-    private ImageIcon imgHero;
+    private static ImageIcon imgHero= new ImageIcon(ClassLoader.getSystemResource("img/ship.png"));
     private Image imgBuf;
     private Ellipse2D sh;                                //фигура героя
     private int x1, y1;                                   //центр героя
     private final int sizeHero = 70;                       //размер героя
     private int stepHero = 5;                             //шаг перемещения героя
     private double degree;                               //текущий угол поворота
-    private final String HEALTH = "❤";
     private int healthCount = 5;
     private int currentBord;
     private GameField gf;
-    private double dist;
     private int countDeaths = 0;
 
-    public int getCountDeaths() {
+    int getCountDeaths() {
         return countDeaths;
     }
 
-    public void setCountDeaths(int countDeaths) {
+     void setCountDeaths(int countDeaths) {
         this.countDeaths = countDeaths;
     }
 
-    public int getStepHero() {
-        return stepHero;
-    }
-
-    public int getCurrentBord() {
+     int getCurrentBord() {
         return currentBord;
     }
 
-    public void setCurrentBord(int currentBord) {
+     void setCurrentBord(int currentBord) {
         this.currentBord = currentBord;
     }
 
-    public int getHealthCount() {
+     int getHealthCount() {
         return healthCount;
     }
 
-    public void setHealthCount(int healthCount) {
+     void setHealthCount(int healthCount) {
         this.healthCount = healthCount;
     }
 
-    public String getHEALTH() {
-        return HEALTH;
+     String getHEALTH() {
+        return  "❤";
     }
 
-    public Image getImgBuf() {
+     Image getImgBuf() {
         return imgBuf;
     }
 
-    public int getSizeHero() {
+     int getSizeHero() {
         return sizeHero;
     }
 
-    public Ellipse2D getSh() {
+     Ellipse2D getSh() {
         return sh;
     }
 
-    public int getX1() {
+     int getX1() {
         return x1;
     }
 
-    public int getY1() {
+     int getY1() {
         return y1;
     }
 
-    public double getDegree() {
+     double getDegree() {
         return degree;
     }
 
-    public void setStepHero(int stepHero) {
+     void setStepHero(int stepHero) {
         this.stepHero = stepHero;
     }
 
-    public ImageIcon getImgHero() {
+     ImageIcon getImgHero() {
         return imgHero;
     }
 
@@ -97,7 +91,6 @@ class Ship {
 
    public void init(GameField gf) {
         this.gf = gf;
-        imgHero = new ImageIcon(ClassLoader.getSystemResource("img/ship.png"));
         currentBord = gf.getFieldW();
         degree = 0;
         x1 = 450;
@@ -109,20 +102,20 @@ class Ship {
 
 
     private Image createHeroImg() {
-        BufferedImage imgBuf = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D gr = imgBuf.createGraphics();
+        BufferedImage defaultBuf = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D gr = defaultBuf.createGraphics();
         gr.rotate(Math.toRadians(degree), 50, 50);
         gr.setColor(Color.GREEN);
         gr.drawImage(imgHero.getImage(), 10, 5, 80, 90, null);
         gr.dispose();
-        return imgBuf;
+        return defaultBuf;
     }
 
 
     private boolean checkCollision(int x, int y) {
         if (gf == null || gf.getEnemyList().size() == 0) return false;
         for (int i = 0; i < gf.getEnemyList().size(); i++) {
-            dist = Point2D.distance(x + sizeHero / 2, y + sizeHero / 2,
+            double dist = Point2D.distance(x + (sizeHero >> 1), y + (sizeHero >> 1),
                     gf.getEnemyList().get(i).getShEn().getCenterX(), gf.getEnemyList().get(i).getShEn().getCenterY());
             if (dist < 70) return true;
         }
@@ -130,7 +123,7 @@ class Ship {
     }
 
 
-    public void setCourse() {                //задаю направление
+     void setCourse() {                //задаю направление
         if (RIGHT_ROTATE.isPressed()) {
             degree += 5;
             if (degree > 360) {
@@ -194,7 +187,7 @@ class Ship {
     }
 
 
-    public void controlHero() {                      //Управление героем
+     void controlHero() {                      //Управление героем
         if (UP.isPressed() && RIGHT.isPressed()) {
             degree = 45;
             y1 = checkBorderH(-stepHero);
@@ -241,7 +234,7 @@ class Ship {
         }
     }
 
-    public void resetControl(){
+     void resetControl(){
         for (Control value : values()) {
             value.setPressed(false);
         }

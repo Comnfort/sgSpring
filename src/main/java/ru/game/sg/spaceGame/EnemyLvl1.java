@@ -13,46 +13,45 @@ import java.awt.image.BufferedImage;
 @Component
 @Scope("prototype")
 class EnemyLvl1 {
-    private Fire f;
+
+    private static Image defaultImg=new ImageIcon(ClassLoader.getSystemResource("img/shipEn.png")).getImage();
+
     private Image imgEnemy;
-    private int x1, y1, stepEnemy, healthCount = 1;
+    private int x1, y1, healthCount = 1;
     private double currentDegree;
     private double needDegree;
     private Ellipse2D shEn;
     private GameField gf;
-    private int sizeHero;
     private double x, y;
     private int timeFire = 1;
     private boolean distance;
-    private double stepRotate = 0.4;
-    private boolean energyFire = false;
     private boolean targetShip = false;
 
-    public double getCurrentDegree() {
+    double getCurrentDegree() {
         return currentDegree;
     }
 
-    public int getHealthCount() {
+     int getHealthCount() {
         return healthCount;
     }
 
-    public void setHealthCount(int healthCount) {
+     void setHealthCount(int healthCount) {
         this.healthCount = healthCount;
     }
 
-    public Image getImgEnemy() {
+     Image getImgEnemy() {
         return imgEnemy;
     }
 
-    public Ellipse2D getShEn() {
+     Ellipse2D getShEn() {
         return shEn;
     }
 
-    public int getX1() {
+     int getX1() {
         return x1;
     }
 
-    public int getY1() {
+     int getY1() {
         return y1;
     }
 
@@ -60,10 +59,8 @@ class EnemyLvl1 {
     public void  init(GameField gf) {
         x1 = gf.getStartPointEnemy().x;
         y1 = gf.getStartPointEnemy().y;
-        imgEnemy = new ImageIcon(ClassLoader.getSystemResource("img/shipEn.png")).getImage();
         this.gf = gf;
-        sizeHero = gf.getShip().getSizeHero();
-        stepEnemy = gf.getShip().getStepHero();
+        int sizeHero = gf.getShip().getSizeHero();
         shEn = new Ellipse2D.Double(x1, y1, sizeHero, sizeHero);
         currentDegree = 270;
         imgEnemy = createEnemyImg();
@@ -72,7 +69,7 @@ class EnemyLvl1 {
     }
 
 
-    public void reDrawEnemy(double x, double y) {                //задаю направление
+     void reDrawEnemy(double x, double y) {                //задаю направление
         if (checkDistance()) {
             double tempDeg = Math.toDegrees(-Math.PI / 2 + Math.atan2(this.y - y, this.x - x));
             needDegree = tempDeg > 0 ? tempDeg : tempDeg + 360;
@@ -95,30 +92,24 @@ class EnemyLvl1 {
     }
 
 
-    public void fire() {
+     void fire() {
         ++timeFire;
-        if (timeFire % 80 == 0) {
-            energyFire = true;
-        } else {
-            energyFire = false;
-        }
+         boolean energyFire = timeFire % 80 == 0;
         if (energyFire && !distance && targetShip) {
             gf.getFr().getProxyInst().getSound().runSound("sound/выстрел.wav");
-            f = gf.getFr().getProxyInst().getFire();
+            Fire f = gf.getFr().getProxyInst().getFire();
             gf.add(f);
             f.fireEn(gf, this);
-            energyFire = false;
             targetShip = false;
         }
     }
 
 
-    public Image createEnemyImg() {
-        imgEnemy = new ImageIcon(ClassLoader.getSystemResource("img/shipEn.png")).getImage();
+     private Image createEnemyImg() {
         BufferedImage imgBuf = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
         Graphics2D gr = imgBuf.createGraphics();
         gr.rotate(Math.toRadians(currentDegree), 50, 50);
-        gr.drawImage(imgEnemy, 10, 5, 80, 90, null);
+        gr.drawImage(defaultImg, 10, 5, 80, 90, null);
         gr.dispose();
         return imgBuf;
     }
@@ -129,6 +120,7 @@ class EnemyLvl1 {
             targetShip = true;
             return;
         }
+        double stepRotate = 0.4;
         if (currentDegree > needDegree) {
             if (currentDegree - needDegree >= 180) {
                 currentDegree = currentDegree + stepRotate > 360 ? currentDegree + stepRotate - 360 : currentDegree + stepRotate;

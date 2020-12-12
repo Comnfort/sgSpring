@@ -4,21 +4,20 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import ru.game.sg.spaceGame.Main;
 
+import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
 
 @Component
 @Lazy
-public class TheEnd extends DialogSG {
-    private static Image imgDialog = new ImageIcon(ClassLoader.getSystemResource("img/victory.jpg")).getImage();
+public final class TheEnd extends DialogSG {
+    private static final Image IMG = new ImageIcon(ClassLoader.getSystemResource("img/victory.jpg")).getImage();
 
-    private String winMessage = "Победа!";
-
-    public TheEnd(Main fr) {
-        super(fr, imgDialog);
-        init();
+     TheEnd(Main fr) {
+        super(fr, IMG);
     }
 
+    @PostConstruct
     private void init() {
         int x = 1100;
         btn1.setLocation(x, 550);
@@ -44,10 +43,11 @@ public class TheEnd extends DialogSG {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Font font = new Font(null, 1, 100);
+        Font font = new Font(null, Font.BOLD, 100);
         g.setColor(new Color(255, 255, 224));
         g.setFont(font);
         FontMetrics metrics = g.getFontMetrics(font);
+        String winMessage = "Победа!";
         int w = metrics.stringWidth(winMessage);
         g.drawString(winMessage, frame.getWidth() / 2 - w / 2, 180);
     }

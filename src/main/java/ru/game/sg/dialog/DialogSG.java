@@ -1,5 +1,6 @@
 package ru.game.sg.dialog;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.game.sg.spaceGame.Main;
 
 import javax.swing.*;
@@ -10,23 +11,24 @@ import java.awt.image.BufferedImage;
 public abstract class DialogSG extends JPanel {
 
      private Image img;
+     @Autowired
      Main frame;
+     @Autowired
      BtnForDialog btn1;
+     @Autowired
      BtnForDialog btn2;
+     @Autowired
      BtnForDialog btn3;
 
 
-    public DialogSG(Main fr, Image img) {
+
+    DialogSG(Main fr, Image img) {
         this.frame = fr;
         this.img = img;
         setBounds(0, 0, frame.getWidth(), frame.getHeight());
         setLayout(null);
         this.img = createBackgroundImg();
-        btn1 = new BtnForDialog();
-        btn2 = new BtnForDialog();
-        btn3 = new BtnForDialog();
     }
-
 
 
     @Override
@@ -35,6 +37,7 @@ public abstract class DialogSG extends JPanel {
         if (img != null)
             g.drawImage(img, 0, 0, null);
     }
+
 
     private Image createBackgroundImg() {
         BufferedImage imgBuf = new BufferedImage(frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_ARGB);

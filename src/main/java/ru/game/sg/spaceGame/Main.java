@@ -46,7 +46,7 @@ public class Main extends JFrame implements ActionListener {
     }
 
 
-    public ProxyInst getProxyInst() {
+     ProxyInst getProxyInst() {
         return proxyInst;
     }
 
@@ -79,37 +79,43 @@ public class Main extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         String event = e.getActionCommand();
-        if (event == "Играть") {
-            setVisible(false);
-            gf=proxyInst.getGameField();
-            add(gf);
-            gf.init();
-            remove(welcome);
-            setVisible(true);
-        } else if (event == "Переиграть") {
-            setVisible(false);
-            gf=proxyInst.getGameField();
-            add(gf);
-            gf.init();
-            remove(fail);
-            setVisible(true);
-        } else if (event == "победа") {
-            setVisible(false);
-            add(theEnd);
-            remove(gf);
-            setVisible(true);
-        } else if (event == "Выход") {
-            System.exit(0);
-        } else if (event == "Главное окно") {
-            setVisible(false);
-            add(welcome);
-            remove(theEnd);
-            setVisible(true);
-        } else {
-            setVisible(false);
-            add(fail);
-            remove(gf);
-            setVisible(true);
+        switch (event) {
+            case "Играть":
+                setVisible(false);
+                gf = proxyInst.getGameField();
+                add(gf);
+                gf.init();
+                remove(welcome);
+                setVisible(true);
+                break;
+            case "Переиграть":
+                setVisible(false);
+                gf = proxyInst.getGameField();
+                add(gf);
+                gf.init();
+                remove(fail);
+                setVisible(true);
+                break;
+            case "победа":
+                setVisible(false);
+                add(theEnd);
+                remove(gf);
+                setVisible(true);
+                break;
+            case "Выход":
+                System.exit(0);
+            case "Главное окно":
+                setVisible(false);
+                add(welcome);
+                remove(theEnd);
+                setVisible(true);
+                break;
+            default:
+                setVisible(false);
+                add(fail);
+                remove(gf);
+                setVisible(true);
+                break;
         }
 
 

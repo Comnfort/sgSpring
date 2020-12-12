@@ -17,9 +17,7 @@ import static ru.game.sg.spaceGame.Control.*;
 @Scope(value = "prototype")
 public class GameField extends JPanel implements ActionListener {
 
-    private SwingWorker<Void, Void> sw;
-    private Fire f;
-    private ImageIcon img;
+    private static ImageIcon img = new ImageIcon(ClassLoader.getSystemResource("img/st.jpg"));
     private Point startPointEnemy;
     private int currentWindowX = 0;         //расположение панели в окне
     private int currentWindowY = 0;         //расположение панели в окне
@@ -35,74 +33,74 @@ public class GameField extends JPanel implements ActionListener {
     private int speedFire;              //скорость стрельбы
     private Coin coin;
     private ArrayList<EnemyLvl1> enemyList;
-    private Image imgCoin;
+    private static Image imgCoin = new ImageIcon(ClassLoader.getSystemResource("img/imgCoin.png")).getImage();
     private GameField gf = this;
     private Main fr;
 
 
 
 
-    public Point getStartPointEnemy() {
+     Point getStartPointEnemy() {
         return startPointEnemy;
     }
 
-    public void setStartPointEnemy(Point startPointEnemy) {
+     void setStartPointEnemy(Point startPointEnemy) {
         this.startPointEnemy = startPointEnemy;
     }
 
-    public int getTimeEnergy() {
+     int getTimeEnergy() {
         return timeEnergy;
     }
 
-    public int getSpeedFire() {
+     int getSpeedFire() {
         return speedFire;
     }
 
-    public Main getFr() {
+     Main getFr() {
         return fr;
     }
 
-    public Coin getCoin() {
+     Coin getCoin() {
         return coin;
     }
 
-    public int getCurrentWindowX() {
+     int getCurrentWindowX() {
         return currentWindowX;
     }
 
-    public int getCurrentWindowY() {
+     int getCurrentWindowY() {
         return currentWindowY;
     }
 
-    public int getFieldWidth() {
+     int getFieldWidth() {
         return fieldWidth;
     }
 
-    public int getFieldHeight() {
+     int getFieldHeight() {
         return fieldHeight;
     }
 
-    public int getCurrentPanelX() {
+     int getCurrentPanelX() {
         return currentPanelX;
     }
 
-    public int getCurrentPanelY() {
+     int getCurrentPanelY() {
         return currentPanelY;
     }
 
-    public int getFieldW() {
+     int getFieldW() {
         return fieldW;
     }
 
-    public int getFieldH() {
+     int getFieldH() {
         return fieldH;
     }
 
-    public ArrayList<EnemyLvl1> getEnemyList() {
+     ArrayList<EnemyLvl1> getEnemyList() {
         return enemyList;
     }
 
-    public Ship getShip() {
+     Ship getShip() {
         return ship;
     }
 
@@ -114,7 +112,6 @@ public class GameField extends JPanel implements ActionListener {
         setLayout(null);
         setOpaque(false);
         setFocusable(true);
-        img = new ImageIcon(ClassLoader.getSystemResource("img/st.jpg"));
         int multiplier = 3;                                     //увеличение окна, множитель
         fieldWidth = fr.getWidth();
         fieldHeight = fr.getHeight();
@@ -135,7 +132,6 @@ public class GameField extends JPanel implements ActionListener {
         ((ChargingBar) pb).init(this);
         add(pb);
         fr.getProxyInst().getSound().runSound("sound/Вступление.wav");
-        imgCoin = new ImageIcon(ClassLoader.getSystemResource("img/imgCoin.png")).getImage();
         enemyList = new ArrayList<>();
         createListener();
         Timer timer = new Timer(30, this);
@@ -184,7 +180,7 @@ public class GameField extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        sw = new SwingWorker<Void, Void>() {
+        SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() {
                 if (timeEnergy < speedFire) {
@@ -195,7 +191,6 @@ public class GameField extends JPanel implements ActionListener {
                 ship.setCourse();
 
 
-
                 return null;
             }
 
@@ -203,10 +198,10 @@ public class GameField extends JPanel implements ActionListener {
             protected void done() {
                 super.done();
                 coin.checkCrossCoin();
-                if (enemyList != null & enemyList.size() != 0) {
-                    for (int i = 0; i < enemyList.size(); i++) {
-                        enemyList.get(i).reDrawEnemy(ship.getSh().getCenterX(), ship.getSh().getCenterY());
-                        enemyList.get(i).fire();
+                if (enemyList != null && enemyList.size() != 0) {
+                    for (EnemyLvl1 enemyLvl1 : enemyList) {
+                        enemyLvl1.reDrawEnemy(ship.getSh().getCenterX(), ship.getSh().getCenterY());
+                        enemyLvl1.fire();
                     }
                 }
                 repaint();
@@ -223,25 +218,25 @@ public class GameField extends JPanel implements ActionListener {
         super.paintComponent(g);
         g.drawImage(img.getImage(), 0, 0, fieldW, fieldH, null);                   //отрисовка фона
         g.drawImage(ship.getImgBuf(), currentPanelX + ship.getX1() - 5, currentPanelY + ship.getY1() - 5, 80, 80, null);              //отрисовка корабля
-        if (enemyList != null & enemyList.size() != 0) {
-            for (int i = 0; i < enemyList.size(); i++) {
-                g.drawImage(enemyList.get(i).getImgEnemy(), enemyList.get(i).getX1() - 5,
-                        enemyList.get(i).getY1() - 5, 80, 80, null);
+        if (enemyList != null && enemyList.size() != 0) {
+            for (EnemyLvl1 enemyLvl1 : enemyList) {
+                g.drawImage(enemyLvl1.getImgEnemy(), enemyLvl1.getX1() - 5,
+                        enemyLvl1.getY1() - 5, 80, 80, null);
 
             }
         }
-        g.setFont(new Font(null, 1, 34));
+        g.setFont(new Font(null, Font.BOLD, 34));
         g.setColor(Color.RED);
         g.drawString(ship.getHEALTH() + "   " + ship.getHealthCount(), currentPanelX + 320, currentPanelY + fieldHeight - 20);
         g.setColor(Color.YELLOW);
         g.drawString(coin.getBadgeCoin() + "   " + coin.getCountCoin(), currentPanelX + 170, currentPanelY + fieldHeight - 20);
-        for (Ellipse2D shape : coin.getaL()) {
+        for (Ellipse2D shape : coin.getBoxCoin()) {
             g.drawImage(imgCoin, shape.getBounds().x, shape.getBounds().y, 28, 28, null);
         }
     }
 
 
-    public void setLoc(int x, int y, int step) {
+     void setLoc(int x, int y, int step) {
         if (currentWindowX != x) {
             currentWindowX = x;
             currentPanelX -= step;
@@ -265,7 +260,7 @@ public class GameField extends JPanel implements ActionListener {
                 if (t == KeyEvent.VK_SPACE) {
                     if (timeEnergy == speedFire) {
                         fr.getProxyInst().getSound().runSound("sound/выстрел.wav");
-                        f = fr.getProxyInst().getFire();
+                        Fire f = fr.getProxyInst().getFire();
                         add(f);
                         f.fireSh(gf);
                         timeEnergy = 0;

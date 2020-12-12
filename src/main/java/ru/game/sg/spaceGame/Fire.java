@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 
 
@@ -20,22 +21,16 @@ import java.awt.image.BufferedImage;
     private Timer tm;                           //таймер
     private Point[] oneBullet;
     private int countToCreate = 0;                //количество точек
-    private ImageIcon imgBullet;
+    private static ImageIcon imgBullet = new ImageIcon(ClassLoader.getSystemResource("img/bullet.png"));
     private Image image;
     private int quantity;
     private Coin con;
-    private Fire f = this;
     private GameField gf;
     private String who;
-    private EnemyLvl1 enemy;
     private SwingWorker<Void, Void> sw;
 
 
-
-
-
-
-    public void fireSh(GameField gf) {
+    void fireSh(GameField gf) {
         this.gf = gf;
         who = "ship";
         commonInit();
@@ -44,17 +39,19 @@ import java.awt.image.BufferedImage;
         this.y = (int) gf.getShip().getSh().getCenterY();
         this.degree = gf.getShip().getDegree();
         radians = Math.toRadians(degree);
+        Fire f = this;
 
         sw = new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() {
-                image = createBulletImg();
                 solution();
                 return null;
             }
 
             @Override
             protected void done() {
+                image = createBulletImg();
+
                 tm = new Timer(10, f);
                 tm.start();
                 super.done();
@@ -74,7 +71,7 @@ import java.awt.image.BufferedImage;
 //        });
     }
 
-    public void fireEn(GameField gf, EnemyLvl1 enShip) {
+     void fireEn(GameField gf, EnemyLvl1 enShip) {
         this.gf = gf;
         who = "enemy";
         commonInit();
@@ -82,8 +79,9 @@ import java.awt.image.BufferedImage;
         this.y = (int) enShip.getShEn().getCenterY();
         this.degree = enShip.getCurrentDegree();
         radians = Math.toRadians(degree);
+        Fire f = this;
 
-        SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {  //< возвращаемый результат, промежуточные данные(используются методом process() -добавляются и хранятся листом)>
+        sw = new SwingWorker<Void, Void>() {  //< возвращаемый результат, промежуточные данные(используются методом process() -добавляются и хранятся листом)>
             @Override
             protected Void doInBackground() {
                 solution();
@@ -105,7 +103,6 @@ import java.awt.image.BufferedImage;
     private void commonInit() {
         quantity = 100;
         oneBullet = new Point[quantity];
-        imgBullet = new ImageIcon(ClassLoader.getSystemResource("img/bullet.png"));
         setOpaque(false);
         setSize(gf.getFieldW(), gf.getFieldH());
     }
@@ -114,7 +111,7 @@ import java.awt.image.BufferedImage;
     private Image createBulletImg() {
         BufferedImage imgBuf = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
         Graphics2D gr = imgBuf.createGraphics();
-        if (who == "ship") {
+        if (who.equals("ship")) {
             gr.rotate(Math.toRadians(degree - 90), 8, 8);
         } else {
 //            gr.rotate(radians-Math.PI/2,8,8);
@@ -126,7 +123,8 @@ import java.awt.image.BufferedImage;
     }
 
     private void addNewEnemy(){
-        gf.getEnemyList().add(enemy=gf.getFr().getProxyInst().getEnemy());
+        EnemyLvl1 enemy;
+        gf.getEnemyList().add(enemy =gf.getFr().getProxyInst().getEnemy());
         enemy.init(gf);
     }
 
@@ -156,28 +154,32 @@ import java.awt.image.BufferedImage;
 
 
     private void checkHit() {
-        if (who == "ship") {
-            if (con.getaL().size() != 0 && countToCreate < quantity) {
-                for (int i = 0; i < con.getaL().size(); i++) {
-                    if (con.getaL().get(i).contains(oneBullet[countToCreate])) {
-                        con.setCountCoin(con.getCountCoin() + 1);
-                        if (con.getCountCoin() == 8) {
-                            gf.setStartPointEnemy(new Point(gf.getFieldWidth() - 250, 650));
-                            addNewEnemy();
-                        } else if (con.getCountCoin() == 17) {
-                            gf.setStartPointEnemy(new Point(gf.getFieldWidth() + 150, 650));
-                            addNewEnemy();
-                        } else if (con.getCountCoin() == 26) {
-                            gf.setStartPointEnemy(new Point(gf.getFieldWidth() * 3 - 250, 150));
-                            addNewEnemy();
-                            gf.setStartPointEnemy(new Point(gf.getFieldWidth() * 2 + 150, 350));
-                            addNewEnemy();
-                        }
-                        gf.getFr().getProxyInst().getSound().runSound("sound/монета.wav");
-                        con.getaL().remove(i);
-                        countToCreate = quantity;
-                        return;
-                    }
+        if (who.equals("ship")) {
+            if (con.getBoxCoin().size() != 0 && countToCreate < quantity) {
+
+
+                for (Ellipse2D ellips : con.getBoxCoin())
+                {
+                   if (ellips.contains(oneBullet[countToCreate]))
+                   {
+                       con.setCountCoin(con.getCountCoin() + 1);
+                       if (con.getCountCoin() == 8) {
+                           gf.setStartPointEnemy(new Point(gf.getFieldWidth() - 250, 650));
+                           addNewEnemy();
+                       } else if (con.getCountCoin() == 17) {
+                           gf.setStartPointEnemy(new Point(gf.getFieldWidth() + 150, 650));
+                           addNewEnemy();
+                       } else if (con.getCountCoin() == 26) {
+                           gf.setStartPointEnemy(new Point(gf.getFieldWidth() * 3 - 250, 150));
+                           addNewEnemy();
+                           gf.setStartPointEnemy(new Point(gf.getFieldWidth() * 2 + 150, 350));
+                           addNewEnemy();
+                       }
+                       gf.getFr().getProxyInst().getSound().runSound("sound/монета.wav");
+                       con.getBoxCoin().remove(ellips);
+                       countToCreate = quantity;
+                       return;
+                   }
                 }
             }
             if (gf.getEnemyList() != null && gf.getEnemyList().size() != 0 && countToCreate < quantity) {
@@ -208,7 +210,6 @@ import java.awt.image.BufferedImage;
                     gf.getFr().actionPerformed(new ActionEvent(gf.getFr(), 0, "fail"));
                 }
                 countToCreate = quantity;
-                return;
             }
         }
     }

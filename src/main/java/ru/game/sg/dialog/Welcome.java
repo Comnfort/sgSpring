@@ -1,24 +1,28 @@
 package ru.game.sg.dialog;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import ru.game.sg.spaceGame.Main;
 
+import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
 
 
 @Component("welcome")
 @Lazy
-public class Welcome extends DialogSG {
-    private static Image imgDialog = new ImageIcon(ClassLoader.getSystemResource("img/p1.jpg")).getImage();
+public final class Welcome extends DialogSG {
+
+    private static final Image IMG = new ImageIcon(ClassLoader.getSystemResource("img/p1.jpg")).getImage();
 
 
-    public Welcome(Main fr) {
-        super(fr, imgDialog);
-        init();
+     Welcome(Main fr) {
+        super(fr, IMG);
     }
 
+
+    @PostConstruct
     private void init() {
         int x = 350;
         btn1.setLocation(x, 250);
